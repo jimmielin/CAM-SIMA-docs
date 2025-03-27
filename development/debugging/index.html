@@ -993,6 +993,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#gdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      gdb
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1370,6 +1379,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#gdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      gdb
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1516,7 +1534,39 @@ export OMP_NUM_THREADS=$nthreads
 totalview ${EXEROOT}/cesm.exe
 </code></pre>
 <ul>
-<li><code>exit</code> to exit the totalview window and give up the node </li>
+<li><code>exit</code> to exit the totalview window and give up the node</li>
+</ul>
+<h3 id="gdb">gdb</h3>
+<ul>
+<li><code>gdb</code> may be useful if you prefer a command-line interface for debugging.</li>
+<li>Similarly to TotalView, here are some basic set up tips for debugging:<ul>
+<li>Use <code>DEBUG=true</code>.</li>
+<li>Build using <code>NTASKS=1</code> and <code>NTHRDS=1</code>, so you do not have to debug in parallel.</li>
+<li>To more easily compare against CAM-SIMA, you can turn off chunking by specifying <code>-pcols &lt;number&gt;</code> in <code>CAM_CONFIG_OPTS</code> to be large enough to cover all columns.</li>
+<li>Use an interactive node; the environment can be set up by <code>source .env_mach_specific.sh</code> from the case directory.</li>
+<li>Run <code>gdb ../bld/cesm.exe</code> from the case run directory.</li>
+</ul>
+</li>
+<li>If comparing against CAM-SIMA:<ul>
+<li>Generate the snapshots CAM-SIMA will run on by running CAM first; then, disable snapshot output in CAM when running CAM in the debugger. If CAM is writing the snapshots at the same time CAM-SIMA is attempting to read them, you will get cryptic <code>NaN</code> in file read errors in CAM-SIMA.</li>
+<li>Remember that CAM snapshots start from the <strong>second</strong> timestep, so you have to skip the first set of whatever breakpoints you set in CAM to get to the first timestep CAM-SIMA runs.</li>
+</ul>
+</li>
+<li>Tips for <code>gdb</code>:<ul>
+<li>Set breakpoints using <code>break file_name.F90:line</code><ul>
+<li>Conditional breakpoints are useful if you want to break inside a loop; e.g., <code>break file_name.F90:123 if k == 26</code>.</li>
+<li>Save breakpoints using <code>save breakpoints &lt;file&gt;</code> and load them using <code>source &lt;file&gt;</code> when restarting <code>gdb</code>.</li>
+<li>Best locations for breakpoints for inspecting both CAM and CAM-SIMA are probably within the scheme itself; there you can inspect if the input variables coming into the scheme actually match each other (if not, then you may have to walk back to the previous scheme in the SDF to see where divergence started.)</li>
+<li>While it may be easy to inspect physics state in CAM (in a <code>_tend</code> subroutine or directly in <code>tphysbc</code>/<code>tphysac</code>) finding the equivalent location in the CCPP cap may not be easy.</li>
+<li>You can <code>info breakpoints</code> to see a list of breakpoints set, and show a count of how many # of times the breakpoints were triggered.</li>
+<li>If your breakpoints are hitting more often than expected but the timestep is not advancing, maybe it was accidentally set in a loop, or chunking was not disabled (for CAM).</li>
+</ul>
+</li>
+<li>Inspect variables using the <code>print</code> command; if differences are isolated in some columns, you can consult the results of "Physics check data" from CAM-SIMA or <code>cprnc</code> output of history files to find where the values are different; then you can print the variable at these columns (Fortran syntax will work, i.e., <code>print zi(2:5,25:26)</code>)</li>
+<li>A combination of breakpoints and watchpoints will help isolate where the CAM and CAM-SIMA runs diverge, then you can <code>backtrace</code> the exact call stack that lead to a specific variable diverging.</li>
+<li>If you need to "go back in time", Totalview on Izumi will be helpful!</li>
+</ul>
+</li>
 </ul>
 
 
@@ -1540,7 +1590,7 @@ totalview ${EXEROOT}/cesm.exe
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="July 31, 2024 18:31:51">July 31, 2024</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="March 27, 2025 22:48:06">March 27, 2025</span>
   </span>
 
     
