@@ -57,7 +57,11 @@ The generated snapshot files should be saved on **derecho** here:
 /glade/campaign/cesm/community/amwg/sima_baselines/cam_sima_test_snapshots
 ```
 
-with the naming convention `cam_<resolution>_<parameterization>_snapshot_derecho_<compiler>_before_cYYYYMMDD.nc` and `cam_<resolution>_<parameterization>_snapshot_derecho_<compiler>_after_cYYYYMMDD.nc`
+with the naming convention `cam<tag>_<resolution>_<parameterization>_snapshot_derecho_<compiler>_before_cYYYYMMDD.nc` and `cam<tag>_<resolution>_<parameterization>_snapshot_derecho_<compiler>_after_cYYYYMMDD.nc`
+
+(e.g., `cam6_4_180_ne3pg3_fhistc_ltso_vertical_diffusion_hb_free_atm_snapshot_derecho_gnu_after_c20260604.nc`).
+
+Older snapshot files may not fully adhere to this naming convention; when creating new snapshots, please follow the example above.
 
 Be sure to run
 ```
